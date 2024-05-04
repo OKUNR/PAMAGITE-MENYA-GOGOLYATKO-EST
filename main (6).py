@@ -4,8 +4,8 @@ from pygame import*
 from random import randint
 
 mixer.init()
-mixer.music.load("stranger-things-124008.mp3")
-mixer.music.play()
+#mixer.music.load("stranger-things-124008.mp3")
+#mixer.music.play()
 #fire_sound = mixer.Sound("")
 
 img_back = "back.jpg"
@@ -34,17 +34,31 @@ class GameSprite(sprite.Sprite):
 class Player(GameSprite):
     def update(self):
         keys = key.get_pressed()
-        if keys[K_LEFT] and self.rect.x > 5:
+        #if keys[K_q] and x >= 20:
+            #x = x + 10
+            #y = y + 10
+        if keys[K_a] and self.rect.x > 5:
             self.rect.x -= self.speed
-        if keys[K_RIGHT] and self.rect.x < win_width - 80:
+        if keys[K_d] and self.rect.x < win_width - 80:
             self.rect.x += self.speed
 
     # def fire(self):
     #     pass
 
     def fire(self):
-        bullet = Bullet(img_bullet, self.rect.centerx, self.rect.top, 15, 20, -15)
+        global x, y
+        bullet = Bullet(img_bullet, self.rect.centerx, self.rect.top, x, y, -15)
         bullets.add(bullet)
+        keys = key.get_pressed()
+        if keys[K_q] and x >= 20:
+            x = x + 20
+            y = y + 20
+        if keys[K_e] and x <= 100:
+            x = x - 20
+            y = y - 20
+x = 20
+y = 20
+
 class Bullet(GameSprite):
     def update(self):
         self.rect.y += self.speed
@@ -94,11 +108,11 @@ while run:
     for e in event.get():
         if e.type == QUIT:
             run = False
-        elif e.type == KEYDOWN:
-            if e.key == K_SPACE:
+        elif e.type == MOUSEBUTTONDOWN:
+            # if e.key == K_SPACE:
                 ship.fire()
-        elif e.type == KEYDOWN:
-            if e.key == K_SPACE:
+        elif e.type == MOUSEBUTTONDOWN:
+            #if e.key == K_SPACE:
                 if num_fire < max_fire and real_time == False:
                     num_fire += 1
                     ship.fire()
@@ -122,7 +136,7 @@ while run:
             score += 1
             monster = Enemy(img_enemy, randint(80, win_width-80), -40, 80, 50, randint(1, 5))
 
-        monsters.add(monster)
+            monsters.add(monster)
         if real_time == True:
             now_time = timer()
             if now_time - last_time < 3:
@@ -149,19 +163,19 @@ while run:
         if score >= goal:
             finish = True
             window.blit(win, (200, 200))
-        else:
-            time.delay(3000)
-            score = 0
-            lost = 0
-            life = 3
-            num_fire = 0
-            finish = False
-            for b in bullets:
-                b.kill()
-            for m in monsters:
-                m.kill()
-            for i in range(1, 6):
-                monster = Enemy(img_enemy, randint(50, win_width -80), -60, 80, 50, randint(1, 5))
-                monsters.add(monster)
+    else:
+        time.delay(3000)
+        score = 0
+        lost = 0
+        life = 3
+        num_fire = 0
+        finish = False
+        for b in bullets:
+            b.kill()
+        for m in monsters:
+            m.kill()
+        for i in range(1, 6):
+            monster = Enemy(img_enemy, randint(50, win_width -80), -60, 80, 50, randint(1, 5))
+            monsters.add(monster)
     display.update()
     time.delay(50)
